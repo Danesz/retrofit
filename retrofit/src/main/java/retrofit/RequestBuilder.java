@@ -261,15 +261,22 @@ final class RequestBuilder implements RequestInterceptor.RequestFacade {
                     "QUERY_MAP parameter \"" + name + "\" value must not be null.");
             }
             
-            HashMap<String,String> queryMap = (HashMap<String,String>) value;
+            HashMap<String,String> queryMap = null;
             
-            for (Map.Entry<String, String> query : queryMap.entrySet()){
-            	String key = query.getKey();
-            	if (key != null && !key.equals("")){
-            		addQueryParam(query.getKey(), query.getValue());	
-            	}else{
-            		//key is null or "", skip
-            	}
+            try{
+                queryMap = (HashMap<String,String>) value;
+                
+                for (Map.Entry<String, String> query : queryMap.entrySet()){
+                	String key = query.getKey();
+                	if (key != null && !key.equals("")){
+                		addQueryParam(query.getKey(), query.getValue());	
+                	}else{
+                		//key is null or "", skip
+                	}
+                }
+            }catch (ClassCastException e){
+                throw new IllegalArgumentException(
+                        "QUERY_MAP keys and values must be String!");	
             }
             
         	break;
