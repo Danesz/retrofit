@@ -18,7 +18,9 @@ package retrofit;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit.RestMethodInfo.ParamUsage;
 import retrofit.client.Header;
@@ -252,6 +254,24 @@ final class RequestBuilder implements RequestInterceptor.RequestFacade {
         	break;
         case DYNAMIC_QUERY_VALUE:
         	//do nothing;
+        	break;
+        case QUERY_MAP:
+            if (value == null) {
+                throw new IllegalArgumentException(
+                    "QUERY_MAP parameter \"" + name + "\" value must not be null.");
+            }
+            
+            HashMap<String,String> queryMap = (HashMap<String,String>) value;
+            
+            for (Map.Entry<String, String> query : queryMap.entrySet()){
+            	String key = query.getKey();
+            	if (key != null && !key.equals("")){
+            		addQueryParam(query.getKey(), query.getValue());	
+            	}else{
+            		//key is null or "", skip
+            	}
+            }
+            
         	break;
         default:
           throw new IllegalArgumentException("Unknown parameter usage: " + paramUsage);

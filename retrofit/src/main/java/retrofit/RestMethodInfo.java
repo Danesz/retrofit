@@ -39,6 +39,7 @@ import retrofit.http.Multipart;
 import retrofit.http.Part;
 import retrofit.http.Path;
 import retrofit.http.Query;
+import retrofit.http.QueryMap;
 import retrofit.http.RestMethod;
 
 /** Request metadata about a service interface declaration. */
@@ -49,7 +50,7 @@ final class RestMethodInfo {
   private static final Pattern PARAM_URL_REGEX = Pattern.compile("\\{(" + PARAM + ")\\}");
 
   enum ParamUsage {
-    PATH, ENCODED_PATH, QUERY, ENCODED_QUERY, FIELD, PART, BODY, HEADER, DYNAMIC_QUERY_KEY, DYNAMIC_QUERY_VALUE
+    PATH, ENCODED_PATH, QUERY, ENCODED_QUERY, FIELD, PART, BODY, HEADER, DYNAMIC_QUERY_KEY, DYNAMIC_QUERY_VALUE, QUERY_MAP
   }
 
   enum RequestType {
@@ -337,6 +338,12 @@ final class RestMethodInfo {
 
               //paramNames[i] = name;
               paramUsage[i] = ParamUsage.DYNAMIC_QUERY_VALUE;
+          } else if (annotationType == QueryMap.class) {
+              //String name = ((DynamicQueryValue) parameterAnnotation).value();
+
+              //paramNames[i] = name;
+              paramUsage[i] = ParamUsage.QUERY_MAP;
+              
           } else if (annotationType == EncodedQuery.class) {
             String name = ((EncodedQuery) parameterAnnotation).value();
 
