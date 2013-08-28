@@ -27,6 +27,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import retrofit.http.Body;
+import retrofit.http.DynamicQueryKey;
+import retrofit.http.DynamicQueryValue;
 import retrofit.http.EncodedPath;
 import retrofit.http.EncodedQuery;
 import retrofit.http.Field;
@@ -47,7 +49,7 @@ final class RestMethodInfo {
   private static final Pattern PARAM_URL_REGEX = Pattern.compile("\\{(" + PARAM + ")\\}");
 
   enum ParamUsage {
-    PATH, ENCODED_PATH, QUERY, ENCODED_QUERY, FIELD, PART, BODY, HEADER
+    PATH, ENCODED_PATH, QUERY, ENCODED_QUERY, FIELD, PART, BODY, HEADER, DYNAMIC_QUERY_KEY, DYNAMIC_QUERY_VALUE
   }
 
   enum RequestType {
@@ -325,6 +327,16 @@ final class RestMethodInfo {
 
             paramNames[i] = name;
             paramUsage[i] = ParamUsage.QUERY;
+          } else if (annotationType == DynamicQueryKey.class) {
+              //String name = ((DynamicQueryKey) parameterAnnotation).value();
+
+              //paramNames[i] = name;
+              paramUsage[i] = ParamUsage.DYNAMIC_QUERY_KEY;
+          } else if (annotationType == DynamicQueryValue.class) {
+              //String name = ((DynamicQueryValue) parameterAnnotation).value();
+
+              //paramNames[i] = name;
+              paramUsage[i] = ParamUsage.DYNAMIC_QUERY_VALUE;
           } else if (annotationType == EncodedQuery.class) {
             String name = ((EncodedQuery) parameterAnnotation).value();
 

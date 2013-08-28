@@ -19,6 +19,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit.RestMethodInfo.ParamUsage;
 import retrofit.client.Header;
 import retrofit.client.Request;
 import retrofit.converter.Converter;
@@ -226,6 +228,31 @@ final class RequestBuilder implements RequestInterceptor.RequestFacade {
             body = converter.toBody(value);
           }
           break;
+        case DYNAMIC_QUERY_KEY:
+            if (value == null) {
+                throw new IllegalArgumentException(
+                    "DYNAMIC_QUERY_KEY parameter \"" + name + "\" value must not be null.");
+            }
+            
+            int dynValueParamIndex = -1;
+            
+            for (int dynValueIndex = 0; dynValueIndex < count; dynValueIndex++){
+            	if (paramUsages[dynValueIndex] == ParamUsage.DYNAMIC_QUERY_VALUE){
+            		dynValueParamIndex = dynValueIndex;
+            	}
+            }
+            
+            if (dynValueParamIndex != -1){
+                Object pValue = args[dynValueParamIndex];
+                addQueryParam(value.toString(), pValue.toString());
+            }else {
+            	//no value for dynamic key, skip;
+            }
+      
+        	break;
+        case DYNAMIC_QUERY_VALUE:
+        	//do nothing;
+        	break;
         default:
           throw new IllegalArgumentException("Unknown parameter usage: " + paramUsage);
       }
